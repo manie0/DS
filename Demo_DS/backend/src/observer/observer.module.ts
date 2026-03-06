@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from '../prisma/prisma.module';
 import { AlertsModule } from './alerts/alerts.module';
 
 /**
@@ -19,7 +18,6 @@ import { AlertsModule } from './alerts/alerts.module';
  */
 @Module({
   imports: [
-    PrismaModule,   // Acceso global a la base de datos
     AlertsModule,   // Toda la lógica del Observer
   ],
   exports: [AlertsModule],

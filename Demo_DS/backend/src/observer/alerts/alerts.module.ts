@@ -5,6 +5,7 @@ import { TankLevelSubject } from '../subjects/tank-level.subject';
 import { DatabaseAlertObserver } from '../observers/database-alert.observer';
 import { LoggerAlertObserver } from '../observers/logger-alert.observer';
 import { ConsoleNotificationObserver } from '../observers/console-notification.observer';
+import { PrismaService } from '../../prisma.service';
 
 /**
  * AlertsModule: módulo NestJS que agrupa toda la lógica del patrón Observer.
@@ -19,6 +20,7 @@ import { ConsoleNotificationObserver } from '../observers/console-notification.o
 @Module({
   controllers: [AlertsController],
   providers: [
+    PrismaService,
     AlertsService,
     // Sujeto del patrón Observer
     TankLevelSubject,

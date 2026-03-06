@@ -1,0 +1,67 @@
+// Prisma schema – Módulo Observer: Lecturas y Alertas de Tanques
+// Grupo 6 – Patrón Observer (Alertas por cambios de nivel/umbrales)
+//
+// NOTA para compañeros:
+//   - El modelo Tank es básico aquí; el Singleton/Adapter pueden extenderlo.
+//   - Alert y TankThreshold son propios del módulo Observer.
+//   - No borrar las relaciones existentes al extender Tank.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Tank: definición básica del tanque.
+// Los compañeros pueden añadir campos (sensor, protocolo, etc.) sin romper esto.
+// ─────────────────────────────────────────────────────────────────────────────
+model Tank {
+  id              Int            @id @default(autoincrement())
+  name            String
+  capacityLiters  Float
+  geometry        String?
+  location        String?
+  createdAt       DateTime       @default(now())
+
+  // Relaciones propias del Observer
+  threshold       TankThreshold?
+  alerts          Alert[]
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// TankThreshold: umbrales por tanque que usa el Observer para evaluar alertas.
+// ─────────────────────────────────────────────────────────────────────────────
+model TankThreshold {
+  id             Int      @id @default(autoincrement())
+  tankId         Int      @unique
+  minLevel       Float    // Litros mínimos antes de alerta NIVEL_BAJO
+  criticalMin    Float    // Litros mínimos antes de alerta NIVEL_CRITICO
+  maxLevel       Float    // Litros máximos antes de alerta NIVEL_ALTO
+  leakThreshold  Float    // Caída en L/min que indica POSIBLE_FUGA
+  updatedAt      DateTime @updatedAt
+
+  tank           Tank     @relation(fields: [tankId], references: [id])
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Alert: registro de cada alerta generada por el patrón Observer.
+// El DatabaseAlertObserver persiste aquí cada evento de cruce de umbral.
+// ─────────────────────────────────────────────────────────────────────────────
+model Alert {
+  id           Int       @id @default(autoincrement())
+  tankId       Int
+  alertType    String    // AlertType enum: NIVEL_BAJO | NIVEL_CRITICO | NIVEL_ALTO | LLENO | POSIBLE_FUGA
+  currentLevel Float     // Nivel actual en litros al momento de la alerta
+  percentage   Float     // Porcentaje de llenado al momento de la alerta
+  threshold    Float     // Umbral que fue cruzado
+  message      String
+  resolved     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  resolvedAt   DateTime? // Nullable: se rellena al resolver la alerta
+
+  tank         Tank      @relation(fields: [tankId], references: [id])
+}

@@ -9,6 +9,8 @@ Stack: **NestJS + Prisma + PostgreSQL** (backend) y **React + Vite** (frontend).
 
 ## Endpoints principales
 
+- `GET /api` → estado de la API y listado rápido de rutas.
+
 ### Singleton
 - `GET /api/singleton/config`
 - `PATCH /api/singleton/config`

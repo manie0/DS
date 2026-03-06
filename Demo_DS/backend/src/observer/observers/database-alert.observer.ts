@@ -11,7 +11,7 @@
 import { Injectable } from '@nestjs/common';
 import { ITankObserver } from '../interfaces/tank-observer.interface';
 import { TankAlertEvent, AlertType } from '../interfaces/tank-alert-event.interface';
-import { PrismaService } from '../../prisma/prisma.service';
+import { PrismaService } from '../../prisma.service';
 
 @Injectable()
 export class DatabaseAlertObserver implements ITankObserver {
